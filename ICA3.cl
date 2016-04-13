@@ -1,5 +1,6 @@
 ;;; she went to the gym
-;;; 
+;;; (parse 'sentence '(she went to the gym because she wanted to become healthy))
+;;;                         effect^        conju^               cause^
 
 (build-lexicon
  `((she     pronoun (sems . female) (number . singular))
@@ -15,7 +16,10 @@
    
    (to      prepo (sems . to))
    
-   (because conju (sems . link))
+   (and     conju (sems . join))
+   (because conju (sems . cause))
+   (but     conju (sems . contrast))
+   (or      conju (sems . alternate))
    
    (gym     noun (sems . place) (number . singular))
    (park    noun (sems . place) (number . singular))
@@ -48,6 +52,11 @@
         (link     . preposition-phrase.link)
         (action   . preposition-phrase.action)
         (state    . preposition-phrase.state))
+   
+   (s5 (sentence -> sentence conju sentence)
+       (if (conju.sems = 'cause)
+           ((sentence.action) (conju.sems) ())
+         ('badstuff)))
    
    (ap  (adjective-phrase -> verb adjective)
         (action . (verb.sems verb.tense))
