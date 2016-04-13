@@ -5,7 +5,7 @@ Lkit loader for UT/AI 1201/0502
 |#
 
 
-(defparameter lkit-root-path "C:/Users/n3053077/Desktop/ICA3")
+(defparameter lkit-root-path "C:/Users/Edward/Documents/Uni/AI applications/ICA3/AI-NLP-CD")
 
 ;; set environment to modern & warn user
 (format t "Loading environment assumed MODERN, setting :MODERN")
