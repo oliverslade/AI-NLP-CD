@@ -35,14 +35,14 @@
 
 (build-grammar
  '((s1  (sentence         -> noun-phrase verb-phrase)
-        (actor  . noun-phrase.sems)
-        (action . verb-phrase.action)
-        (object . verb-phrase.object))
+        (actor   . noun-phrase.sems)
+        (action  . verb-phrase.action)
+        (object  . verb-phrase.object))
    
    (s2  (sentence         -> pronoun-phrase noun-phrase)
         (actor    . pronoun-phrase.actor)
         (action   . pronoun-phrase.action)
-        (location . noun-phrase.sems))
+        (object . noun-phrase.sems))
    
    (s3  (sentence         -> sentence conju adjective-phrase))
    
@@ -62,17 +62,17 @@
         (action . (verb.sems verb.tense))
         (state  . adjective.sems))
    
-   (ap1 (preposition-phrase -> prepo adjective-phrase)
+   (pr  (preposition-phrase -> prepo adjective-phrase)
         (link   . (prepo.sems))
         (action . adjective-phrase.action)
         (state  . (adjective-phrase.state)))
    
-   (np1 (noun-phrase      -> determiner noun)
-        (number . noun.number)
-        (sems   . (determiner.sems noun.number noun.sems)))
-   
-   (np2 (noun-phrase      -> prepo noun-phrase)
-        (sems . noun-phrase))
+   (np  (noun-phrase      -> ?prepo determiner noun)
+        (if prepo
+            (link . prepo.sems))
+        (number . (noun.number))
+        (sems   . (determiner.sems noun.number noun.sems))
+        )
    
    (vp  (verb-phrase      -> verb noun-phrase)
         (action . verb.sems)
