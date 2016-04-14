@@ -17,7 +17,7 @@
    (to      prepo (sems . to))
    
    (and     conju (sems . join))
-   (because conju (sems . cause))
+   (because conju (sems . causes))
    (but     conju (sems . contrast))
    (or      conju (sems . alternate))
    
@@ -40,9 +40,13 @@
         (object  . verb-phrase.object))
    
    (s2  (sentence         -> pronoun-phrase noun-phrase)
+;       (if (pronoun-phrase.action.sems
         (actor    . pronoun-phrase.actor)
         (action   . pronoun-phrase.action)
-        (object . noun-phrase.sems))
+        (object   . noun-phrase.sems)
+;       (test1    . pronoun-phrase.verb.sems)
+;       (test2    . pronoun-phrase.verb.action)
+       )
    
    (s3  (sentence         -> sentence conju adjective-phrase))
    
@@ -55,7 +59,7 @@
    
    (s5 (sentence -> sentence conju sentence)
        (if (conju.sems = 'cause)
-           ((sentence.action) (conju.sems) ())
+           (('effect (sentence.action) (sentence.object)) ('<- conju.sems) ())
          ('badstuff)))
    
    (ap  (adjective-phrase -> verb adjective)
