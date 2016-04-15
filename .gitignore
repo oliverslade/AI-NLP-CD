@@ -1,3 +1,5 @@
+*.fasl
+lkit-loader.lsp
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
