@@ -4,35 +4,35 @@
 ;;; (parse 'sentence '(he burned the meal because he forgot it was cooking))
 
 (build-lexicon
- `((she     pronoun (sems . female)  (number . singular))
-   (he      pronoun (sems . male)    (number . singular))
-   (they    pronoun (sems . neutral) (number . plural))
-   (it      pronoun (sems . neutral) (number . singular))
+ `((she        pronoun (sems . female)  (number . singular))
+   (he         pronoun (sems . male)    (number . singular))
+   (they       pronoun (sems . neutral) (number . plural))
+   (it         pronoun (sems . neutral) (number . singular))
    
-   (forgot  verb (sems  . forgot)   (tense . past-tense))
-   (went    verb (sems  . travel)   (tense . past-tense))
-   (wanted  verb (sems  . want)     (tense . past-tense))
-   (burned  verb (sems  . damage)   (tense . past-tense)    (state . bad))
-   (burnt   verb (sems  . damage)   (tense . past-tense)    (state . bad))
-   (become  verb (sems  . change)   (tense . present-tense))
-   (chased  verb (sems  . hunts)    (tense . past-tense))
-   (was     verb (sems  . exist)    (tense . passive))
-   (cooking verb (sems  . prepare)  (tense . past))
+   (forgot       verb (sems  . forgot)   (tense . past-tense))
+   (went         verb (sems  . travel)   (tense . past-tense))
+   (wanted       verb (sems  . want)     (tense . past-tense))
+   (burned       verb (sems  . damage)   (tense . past-tense)    (state . bad))
+   (burnt        verb (sems  . damage)   (tense . past-tense)    (state . bad))
+   (become       verb (sems  . change)   (tense . present-tense))
+   (chased       verb (sems  . hunts)    (tense . past-tense))
+   (was          verb (sems  . exist)    (tense . passive))
+   (cooking      verb (sems  . prepare)  (tense . past))
    
-   (to      prepo (sems . to))
+   (to           prepo (sems . to))
    
-   (and     conju (sems . join))
-   (because conju (sems . cause))
-   (but     conju (sems . contrast))
-   (or      conju (sems . alternate))
+   (and          conju (sems . join))
+   (because      conju (sems . cause))
+   (but          conju (sems . contrast))
+   (or           conju (sems . alternate))
    
-   (gym     noun (sems . place)  (number . singular))
-   (park    noun (sems . place)  (number . singular))
-   (meal    noun (sems . food)   (number . singular))
-   (cat     noun (sems . feline) (number . singular))
-   (dog     noun (sems . canine) (number . singular))
+   (gym           noun (sems . place)   (number . singular))
+   (park          noun (sems . place)   (number . singular))
+   (meal          noun (sems . food)    (number . singular))
+   (cat           noun (sems . feline)  (number . singular))
+   (dog           noun (sems . canine)  (number . singular))
 
-   (healthy adjective (sems . good))
+   (healthy adjective  (sems . good))
    
    (the     determiner (sems . specific))
    (a       determiner )
@@ -69,7 +69,7 @@
          ('error))
        )
    
-   ;;; he burned the food because he forgot
+   ;;; he burned the food because he forgot 
    (s5 (sentence -> sentence conju pronoun-phrase)
        (glitch gender-agreement if not sentence.actor = pronoun-phrase.actor)
        (if (conju.sems = 'cause)
@@ -128,76 +128,5 @@
         (object . noun-phrase.sems)
         (number . verb.number))
        ))
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- ;;; ================== TESTING =========================
- ;(defparameter tests
- ; 
- ; ;;;TESTING THE EXAMPLE SCENARIO (RECURSIVE & MATCHER)
- ; 
- ; '((test1 - (find-average-matcher '(10 ((30 1) 20) (8 (5 (50 7)) 9) 40)) => 18)
- ;   (test2 - (find-average-head '(10 ((30 1) 20) (8 (5 (50 7)) 9) 40)) => 18)
- ;   (test3 - (find-average-tail '(10 ((30 1) 20) (8 (5 (50 7)) 9) 40)) => 18)
- ;   
- ;   ;;;TESTING NIL AND ZERO INPUT IN FUNCTION (RECURSIVE & MATCHER)
- ;   
- ;   (test4 - (find-average-matcher '()) => nil)
- ;   (test5 - (find-average-head '()) => nil)
- ;   (test6 - (find-average-tail '()) => nil)
- ;   (test7 - (find-average-matcher '(0)) => 0)
- ;   (test8 - (find-average-head '(0)) => 0)
- ;   (test9 - (find-average-tail '(0)) => 0)
- ;   
- ;   ;;;TESTING A FLAT LIST (RECURSIVE & MATCHER)
- ;   
- ;   (test10 - (find-average-matcher '(1 2 3 4 5 6 7 8 9)) => 5)
- ;   (test11 - (find-average-head '(1 2 3 4 5 6 7 8 9)) => 5)
- ;   (test12 - (find-average-tail '(1 2 3 4 5 6 7 8 9)) => 5)
- ;   
- ;   ;;;TESTING A MINUS IN THE LIST (RECURSIVE & MATCHER)
- ;   
- ;   (test13 - (find-average-matcher '(10 ((-30 1) 20) (8 (5 (50 7)) 9) 40)) => 12)
- ;   (test14 - (find-average-head '(10 ((-30 1) 20) (8 (5 (50 7)) 9) 40)) => 12)
- ;   (test15 - (find-average-tail '(10 ((-30 1) 20) (8 (5 (50 7)) 9) 40)) => 12)
- ;   
- ;   ;;;TESTING THE EXAMPLE SCENARIO (ITERATIVE)
- ;   
- ;   (test16 - (iterative-average1 '(10 ((30 1) 20) (8 (5 (50 7)) 9) 40)) => 18)
- ;   (test17 - (iterative-average2 '(10 ((30 1) 20) (8 (5 (50 7)) 9) 40)) => 18)
- ;   
- ;   ;;;TESTING NIL AND ZERO INPUT IN FUNCTION (ITERATIVE)
- ;   
- ;   (test18 - (iterative-average1 '()) => nil)
- ;   (test19 - (iterative-average2 '()) => nil)
- ;   (test20 - (iterative-average1 '(0)) => 0)
- ;   (test21 - (iterative-average2 '(0)) => 0) 
- ;   
- ;   ;;;TESTING A FLAT LIST (ITERATIVE)
- ;   
- ;   (test22 - (iterative-average1 '(1 2 3 4 5 6 7 8 9)) => 5)
- ;   (test23 - (iterative-average2 '(1 2 3 4 5 6 7 8 9)) => 5)
- ;   
- ;   ;;;TESTING A MINUS IN THE LIST (ITERATIVE)
- ;   
- ;   (test24 - (iterative-average1 '(10 ((-30 1) 20) (8 (5 (50 7)) 9) 40)) => 12)
- ;   (test25 - (iterative-average2 '(10 ((-30 1) 20) (8 (5 (50 7)) 9) 40)) => 12)    
- ;   ))
   
  
