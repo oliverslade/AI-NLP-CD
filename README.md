@@ -39,3 +39,4 @@ Research:
 Report:
   - Cry
   - Possibility of using Op-Search and Lexicon to transition real world objects between states.
+  - Write about Governing Categories / Assisting Categories.
