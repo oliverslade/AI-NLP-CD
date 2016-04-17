@@ -19,8 +19,12 @@ Load Order:
   - Load Tests
 
 Research:
-  - Roger Schank - Conceptual Dependancy
-    - Real world object with attributes
-    - Real world actions with attributes
-    - Locations
-    - Times
+  - Roger Schank - A Conceptual Dependancy Parser For Natural Language
+    - Real world object with attributes.
+    - Real world actions with attributes.
+    - Locations.
+    - Times.
+
+Report:
+  - Cry
+  - Possibility of using Op-Search and Lexicon to transition real world objects between states.
