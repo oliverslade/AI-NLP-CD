@@ -1,6 +1,10 @@
 # AI-NLP-CD
 Conceptual dependent natural language processing AI 
 
+ToDo:
+  - Add attributes to objects/actions.
+  - More complex sentences.
+
 Focus on relationships such as: 
   - “She went to the gym BECAUSE she wanted to get healthy” 
   - “He burned the dinner BECAUSE he forgot”
@@ -11,6 +15,12 @@ Focus on relationships such as:
   - "SINCE helium rises a helium balloon floats."
   - "Water is formed WHEN two hydrogen atoms and one oxygen atom combine."
 
+Add attributes to objects/actions:
+  - "The STUPID man BURNED the meal because he forgot it was cooking."
+  
+The term stupid refers to the concept (stupidity or intelligence) which cannot stand alone conceptually. The concept man can stand alone and is modified, conceptually by ‘stupid’, so it is realised in the network as a governor with its dependant.
+Book thingy: http://dl.acm.org/citation.cfm?id=990405 
+
 Load Order:
   - Load Utils
   - Load Matcher
@@ -20,7 +30,7 @@ Load Order:
 
 Research:
   - Roger Schank - A Conceptual Dependancy Parser For Natural Language
-    - Real world object with attributes.
+    - Real world object with attributes (Big/Small, Fat/Skinny, Smart/Stupid).
     - Real world actions with attributes.
     - Locations.
     - Times.
