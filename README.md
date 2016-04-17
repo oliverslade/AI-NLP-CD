@@ -18,7 +18,7 @@ Focus on relationships such as:
 Add attributes to objects/actions:
   - "The STUPID man BURNED the meal because he forgot it was cooking."
   
-The term stupid refers to the concept (stupidity or intelligence) which cannot stand alone conceptually. The concept man can stand alone and is modified, conceptually by ‘stupid’, so it is realised in the network as a governor with its dependant.
+#####The term stupid refers to the concept (stupidity or intelligence) which cannot stand alone conceptually. The concept man can stand alone and is modified, conceptually by ‘stupid’, so it is realised in the network as a governor with its dependant.
 
 Book thingy: http://dl.acm.org/citation.cfm?id=990405 
 
