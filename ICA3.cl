@@ -2,6 +2,8 @@
 ;;; (parse 'sentence '(she went to the gym because she wanted to become healthy))
 ;;;                         effect^        conju^               cause^
 ;;; (parse 'sentence '(he burned the meal because he forgot it was cooking))
+;;;
+;;; (parse 'sentence '(john wore a coat because it was cold))
 
 (build-lexicon
  `((she     pronoun (sems . female)  (number . singular))
@@ -9,33 +11,38 @@
    (they    pronoun (sems . neutral) (number . plural))
    (it      pronoun (sems . neutral) (number . singular))
    
-   (forgot  verb (sems  . forgot)   (tense . past-tense))
-   (went    verb (sems  . travel)   (tense . past-tense))
-   (wanted  verb (sems  . want)     (tense . past-tense))
-   (burned  verb (sems  . damage)   (tense . past-tense)    (state . bad))
-   (burnt   verb (sems  . damage)   (tense . past-tense)    (state . bad))
-   (become  verb (sems  . change)   (tense . present-tense))
-   (chased  verb (sems  . hunts)    (tense . past-tense))
-   (was     verb (sems  . exist)    (tense . passive))
-   (cooking verb (sems  . prepare)  (tense . past))
+   (john    noun    (sems . person) (number . singular))
    
-   (to      prepo (sems . to))
+   (become  verb    (sems  . change)   (tense . present-tense))
+   (burned  verb    (sems  . damage)   (tense . past-tense)    (state . bad))
+   (burnt   verb    (sems  . damage)   (tense . past-tense)    (state . bad))
+   (chased  verb    (sems  . hunts)    (tense . past-tense))
+   (cooking verb    (sems  . prepare)  (tense . past))
+   (forgot  verb    (sems  . forgot)   (tense . past-tense))
+   (wanted  verb    (sems  . want)     (tense . past-tense))
+   (was     verb    (sems  . exist)    (tense . passive))
+   (went    verb    (sems  . travel)   (tense . past-tense))
+   (wore    verb    (sems  . equip)    (tense . past-tense))
    
-   (and     conju (sems . join))
-   (because conju (sems . cause))
-   (but     conju (sems . contrast))
-   (or      conju (sems . alternate))
+   (to      prepo   (sems . to))
    
-   (gym     noun (sems . place)  (number . singular))
-   (park    noun (sems . place)  (number . singular))
-   (meal    noun (sems . food)   (number . singular))
-   (cat     noun (sems . feline) (number . singular))
-   (dog     noun (sems . canine) (number . singular))
-
-   (healthy adjective (sems . good))
+   (and     conju   (sems . join))
+   (because conju   (sems . cause))
+   (but     conju   (sems . contrast))
+   (or      conju   (sems . alternate))
+   
+   (cat     noun   (sems . feline) (number . singular))
+   (coat    noun   (sems . clothes) (number . singular))
+   (dog     noun   (sems . canine) (number . singular))
+   (gym     noun   (sems . place)  (number . singular))
+   (meal    noun   (sems . food)   (number . singular))
+   (park    noun   (sems . place)  (number . singular))
+   
+   (cold    adjective  (sems . low-temp))
+   (healthy adjective  (sems . good))
    
    (the     determiner (sems . specific))
-   (a       determiner )
+   (a       determiner (sems . general))
    ))
 
 (build-grammar
@@ -60,11 +67,15 @@
         (state     . preposition-phrase.state))
    
    ;;; she went to the gym because she wanted to become healthy
+   ;;; john wore a coat because it was cold
    (s4 (sentence -> sentence($firstS) conju sentence($secondS))
        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
+       (actor . $firstS.actor)
        (if (conju.sems = 'cause)
-             (('effect-> ($firstS.action) ($firstS.object)) 
-              ('cause-> ($secondS.action) ($secondS.state))
+           (('effect-> ($firstS.action) ($firstS.object))
+            (if $secondS.action
+                ('cause-> ($secondS.action) ($secondS.state))
+              ('cause-> ($secondS.state)))
               ('link-> conju))
          ('error))
        )
@@ -72,9 +83,10 @@
    ;;; he burned the food because he forgot
    (s5 (sentence -> sentence conju pronoun-phrase)
        (glitch gender-agreement if not sentence.actor = pronoun-phrase.actor)
+       (actor . $firstS.actor)
        (if (conju.sems = 'cause)
              (('effect-> (sentence.action) (sentence.object)) 
-              ('cause-> (pronoun-phrase.actor) (pronoun-phrase.action))
+              ('cause-> (pronoun-phrase.actor) (pronoun-phrase.action) (sentence.object))
               ('link-> conju))
          ('error)))
    
@@ -85,6 +97,21 @@
        (tense-ind . verb-verb-phrase.tense-indicator)
        (object    . verb-verb-phrase.actor)
        (state     . verb-verb-phrase.action))
+   
+   ;;; John wore a coat
+   (s7 (sentence -> noun verb-phrase)
+       (actor     . noun.sems)
+       (action    . verb-phrase.action)
+       (object    . verb-phrase.object)
+       (number    . verb-phrase.number))
+   
+   ;;; (it) was cold / (john) was cold
+   (s8 (sentence -> ?noun ?pronoun verb adjective)
+       (fail if (noun and pronoun))
+       (if noun    (actor  . noun))
+       (if pronoun (actor  . pronoun))
+       (tense-indicator    . verb)
+       (state              . adjective.sems))
           
    ;;;  become healthy
    (ap  (adjective-phrase -> verb adjective)
@@ -109,7 +136,7 @@
         (if pronoun (actor  . pronoun))
         (tense-indicator    . $firstV)
         (action             . $secondV))
-   
+
    ;;;  was running / was cooking 
    (vn  (verb-noun -> verb noun)
        (action . verb)
