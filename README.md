@@ -36,6 +36,12 @@ Research:
     - Locations.
     - Times.
 
+Resources:
+  - WordNet: wordnet.princeton.edu
+  - VerbNet: http://verbs.colorado.edu/~mpalmer/projects/verbnet.html
+  - FrameNet: https://framenet.icsi.berkeley.edu/fndrupal/ <----- Best
+  - Roger Schank: http://dl.acm.org/citation.cfm?id=990405
+
 Report:
   - Cry 
   - Have existential crisis
