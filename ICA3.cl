@@ -4,42 +4,49 @@
 ;;; (parse 'sentence '(he burned the meal because he forgot it was cooking))
 ;;;
 ;;; (parse 'sentence '(john wore a coat because it was cold))
+;;;
+;;; (parse 'sentence '(stop eating bad food in order to become healthy))
 
 (build-lexicon
- `((she     pronoun (sems . female)  (number . singular))
-   (he      pronoun (sems . male)    (number . singular))
-   (they    pronoun (sems . neutral) (number . plural))
-   (it      pronoun (sems . neutral) (number . singular))
+ `((she     pronoun (sems . female)    (number . singular))
+   (he      pronoun (sems . male)      (number . singular))
+   (they    pronoun (sems . neutral)   (number . plural))
+   (it      pronoun (sems . neutral)   (number . singular))
    
-   (john    noun    (sems . person) (number . singular))
+   (john    noun     (sems . person)    (number . singular))
    
-   (become  verb    (sems  . change)   (tense . present-tense))
-   (burned  verb    (sems  . damage)   (tense . past-tense)    (state . bad))
-   (burnt   verb    (sems  . damage)   (tense . past-tense)    (state . bad))
-   (chased  verb    (sems  . hunts)    (tense . past-tense))
-   (cooking verb    (sems  . prepare)  (tense . past))
-   (forgot  verb    (sems  . forgot)   (tense . past-tense))
-   (wanted  verb    (sems  . want)     (tense . past-tense))
-   (was     verb    (sems  . exist)    (tense . passive))
-   (went    verb    (sems  . travel)   (tense . past-tense))
-   (wore    verb    (sems  . equip)    (tense . past-tense))
+   (become  verb     (sems  . change)   (tense . present-tense))
+   (burned  verb     (sems  . damage)   (tense . past-tense)    (state . bad))
+   (burnt   verb     (sems  . damage)   (tense . past-tense)    (state . bad))
+   (chased  verb     (sems  . hunts)    (tense . past-tense))
+   (cooking verb     (sems  . prepare)  (tense . past))
+   (eating  verb     (sems  . consume)  (tense . todo))
+   (forgot  verb     (sems  . forgot)   (tense . past-tense))
+   (wanted  verb     (sems  . want)     (tense . past-tense))
+   (stop    verb     (sems  . end)      (tense . present-tense))
+   (was     verb     (sems  . exist)    (tense . passive))
+   (went    verb     (sems  . travel)   (tense . past-tense))
+   (wore    verb     (sems  . equip)    (tense . past-tense))
    
-   (to      prepo   (sems . to))
+   (to       prepo   (sems . to))
    
-   (and     conju   (sems . join))
-   (because conju   (sems . cause))
-   (but     conju   (sems . contrast))
-   (or      conju   (sems . alternate))
+   (and      conju   (sems . join))
+   (because  conju   (sems . cause))
+   (but      conju   (sems . contrast))
+   (in-order conju   (sems . cause))
+   (or       conju   (sems . alternate))
    
-   (cat     noun   (sems . feline) (number . singular))
-   (coat    noun   (sems . clothes) (number . singular))
-   (dog     noun   (sems . canine) (number . singular))
-   (gym     noun   (sems . place)  (number . singular))
-   (meal    noun   (sems . food)   (number . singular))
-   (park    noun   (sems . place)  (number . singular))
+   (cat     noun     (sems . feline) (number . singular))
+   (coat    noun     (sems . clothes) (number . singular))
+   (dog     noun     (sems . canine) (number . singular))
+   (food    noun     (sems . food)   (number . general))
+   (gym     noun     (sems . place)  (number . singular))
+   (meal    noun     (sems . food)   (number . singular))
+   (park    noun     (sems . place)  (number . singular))
    
+   (bad     adjective  (sems . bad))
    (cold    adjective  (sems . low-temp))
-   (healthy adjective  (sems . good))
+   (healthy adjective  (sems . (health-good)))
    
    (the     determiner (sems . specific))
    (a       determiner (sems . general))
@@ -112,6 +119,21 @@
        (if pronoun (actor  . pronoun))
        (tense-indicator    . verb)
        (state              . adjective.sems))
+   
+   ;;; stop eating (bad) food
+   (s9  (sentence -> verb-verb-phrase ?adjective noun)
+        (action . (verb-verb-phrase.tense-indicator verb-verb-phrase.action))
+        (if adjective (state . adjective.sems))
+       (object . noun.sems))
+   
+   (s10 (sentence -> sentence conju preposition-phrase)
+        (glitch gender-agreement if not sentence.actor = preposition-phrase.actor)
+       (actor . sentence.actor)
+       (if (conju.sems = 'cause)
+             (('effect-> (sentence.action) (sentence.object)) 
+              ('cause-> (preposition-phrase.link) (preposition-phrase.action) (preposition-phrase.state))
+              ('link-> conju))
+         ('error)))
           
    ;;;  become healthy
    (ap  (adjective-phrase -> verb adjective)
@@ -134,13 +156,13 @@
         (fail if (noun and pronoun))
         (if noun    (actor  . noun))
         (if pronoun (actor  . pronoun))
-        (tense-indicator    . $firstV)
-        (action             . $secondV))
+        (tense-indicator    . $firstV.sems)
+        (action             . $secondV.sems))
 
    ;;;  was running / was cooking 
    (vn  (verb-noun -> verb noun)
-       (action . verb)
-       (sems   . noun))
+        (action . verb)
+        (sems   . noun))
    
    ;;;  (to) the gym
    (np  (noun-phrase      -> ?prepo determiner noun)
