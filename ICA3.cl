@@ -32,17 +32,18 @@
    
    (and      conju   (sems . join))
    (because  conju   (sems . causation))
+   (so       conju   (sems . causing))
    (but      conju   (sems . contrast))
-   (in-order conju   (sems . cause))
+   (in-order conju   (sems . causation))
    (or       conju   (sems . alternate))
    
-   (cat     noun     (sems . feline) (number . singular))
+   (cat     noun     (sems . feline)  (number . singular))
    (coat    noun     (sems . clothes) (number . singular))
-   (dog     noun     (sems . canine) (number . singular))
-   (food    noun     (sems . food)   (number . general))
-   (gym     noun     (sems . place)  (number . singular))
-   (meal    noun     (sems . food)   (number . singular))
-   (park    noun     (sems . place)  (number . singular))
+   (dog     noun     (sems . canine)  (number . singular))
+   (food    noun     (sems . food)    (number . general))
+   (gym     noun     (sems . place)   (number . singular))
+   (meal    noun     (sems . food)    (number . singular))
+   (park    noun     (sems . place)   (number . singular))
    
    (bad     adjective  (sems . bad))
    (cold    adjective  (sems . low-temp))
@@ -75,23 +76,64 @@
    
    ;;; she went to the gym because she wanted to become healthy
    ;;; john wore a coat because it was cold
+;   (s4 (sentence -> sentence($firstS) conju sentence($secondS))
+;       (glitch gender-agreement if not $firstS.actor = $secondS.actor)
+;       (actor . $firstS.actor)
+;       (if (conju.sems = 'causation)
+;           (('effect-> ($firstS.action) ($firstS.object))
+;            (if $secondS.action
+;                ('cause-> ($secondS.action) ($secondS.state))
+;              ('cause-> ($secondS.state)))
+;              ('link-> conju))
+;         ('error))
+   ;       )
+   
+   ;;; Remade S4. Uses nested IFs to check conju semantics.
+   ;;; Could use COND, shown below.
    (s4 (sentence -> sentence($firstS) conju sentence($secondS))
        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
        (actor . $firstS.actor)
-       (if (conju.sems = 'cause)
+       (if (conju.sems = 'causation)
            (('effect-> ($firstS.action) ($firstS.object))
             (if $secondS.action
                 ('cause-> ($secondS.action) ($secondS.state))
               ('cause-> ($secondS.state)))
-              ('link-> conju))
-         ('error))
+            ('link-> conju))
+         (if (conju.sems = 'causing)
+             ((if $firstS.action
+                  ('cause-> ($firstS.action) ($firstS.state))
+                ('cause-> ($firstS.state)))
+              ('effect-> ($secondS.action) ($secondS.object))
+              ('link-> conju.sems))
+           ('error))
+         )
        )
+   
+   ;;; COND doesn't work. Prints out the whole statement.
+;   (s4 (sentence -> sentence($firstS) conju sentence($secondS))
+;       (glitch gender-agreement if not $firstS.actor = $secondS.actor)
+;       (actor . $firstS.actor)
+;       (cond ((conju.sems = 'causation)
+;              (('effect-> ($firstS.action) ($firstS.object))
+;               (if $secondS.action
+;                   ('cause-> ($secondS.action) ($secondS.state))
+;                 ('cause-> ($secondS.state)))
+;               ('link-> conju)))
+;             ((conju.sems = 'causing)
+;              (('effect-> ($secondS.action) ($secondS.object))
+;               (if $firstS.action
+;                   ('cause-> ($firstS.action) ($firstS.state))
+;                 ('cause-> ($firstS.state)))
+;               ('link-> conju)))
+;             (t ('error))
+;             )
+;       )
    
    ;;; he burned the food because he forgot
    (s5 (sentence -> sentence conju pronoun-phrase)
        (glitch gender-agreement if not sentence.actor = pronoun-phrase.actor)
        (actor . $firstS.actor)
-       (if (conju.sems = 'cause)
+       (if (conju.sems = 'causation)
              (('effect-> (sentence.action) (sentence.object)) 
               ('cause-> (pronoun-phrase.actor) (pronoun-phrase.action) (sentence.object))
               ('link-> conju))
@@ -127,12 +169,12 @@
    
    (s10 (sentence -> sentence conju preposition-phrase)
         (glitch gender-agreement if not sentence.actor = preposition-phrase.actor)
-       (actor . sentence.actor)
-       (if (conju.sems = 'cause)
-             (('effect-> (sentence.action) (sentence.object)) 
-              ('cause-> (preposition-phrase.link) (preposition-phrase.action) (preposition-phrase.state))
-              ('link-> conju))
-         ('error)))
+        (actor . sentence.actor)
+        (if (conju.sems = 'causation)
+              (('effect-> (sentence.action) (sentence.object)) 
+               ('cause-> (preposition-phrase.link) (preposition-phrase.action) (preposition-phrase.state))
+               ('link-> conju))
+          ('error)))
           
    ;;;  become healthy
    (ap  (adjective-phrase -> verb adjective)
