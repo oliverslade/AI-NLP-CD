@@ -88,6 +88,8 @@
 ;         ('error))
    ;       )
    
+   
+   
    ;;; Remade S4. Uses nested IFs to check conju semantics.
    ;;; Could use COND, shown below.
    (s4 (sentence -> sentence($firstS) conju sentence($secondS))
@@ -98,7 +100,7 @@
             (if $secondS.action
                 ('cause-> ($secondS.action) ($secondS.state))
               ('cause-> ($secondS.state)))
-            ('link-> conju))
+            ('link-> conju.sems))
          (if (conju.sems = 'causing)
              ((if $firstS.action
                   ('cause-> ($firstS.action) ($firstS.state))
@@ -108,6 +110,8 @@
            ('error))
          )
        )
+   
+   
    
    ;;; COND doesn't work. Prints out the whole statement.
 ;   (s4 (sentence -> sentence($firstS) conju sentence($secondS))
