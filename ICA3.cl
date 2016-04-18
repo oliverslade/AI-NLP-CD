@@ -19,8 +19,8 @@
    (burned  verb     (sems  . damage)   (tense . past-tense)    (state . bad))
    (burnt   verb     (sems  . damage)   (tense . past-tense)    (state . bad))
    (chased  verb     (sems  . hunts)    (tense . past-tense))
-   (cooking verb     (sems  . prepare)  (tense . past))
-   (eating  verb     (sems  . consume)  (tense . todo))
+   (cooking verb     (sems  . prepare)  (tense . past-tense))
+   (eating  verb     (sems  . ingest)   (tense . continuous))
    (forgot  verb     (sems  . forgot)   (tense . past-tense))
    (wanted  verb     (sems  . want)     (tense . past-tense))
    (stop    verb     (sems  . end)      (tense . present-tense))
@@ -31,7 +31,7 @@
    (to       prepo   (sems . to))
    
    (and      conju   (sems . join))
-   (because  conju   (sems . cause))
+   (because  conju   (sems . causation))
    (but      conju   (sems . contrast))
    (in-order conju   (sems . cause))
    (or       conju   (sems . alternate))
@@ -100,10 +100,9 @@
    ;;;  he forgot it was cooking
    (s6 (sentence -> pronoun-phrase verb-verb-phrase)
        (actor     . pronoun-phrase.actor)
-       (action    . pronoun-phrase.action)
+       (action    . ((pronoun-phrase.action) (verb-verb-phrase.action)))
        (tense-ind . verb-verb-phrase.tense-indicator)
-       (object    . verb-verb-phrase.actor)
-       (state     . verb-verb-phrase.action))
+       (object    . verb-verb-phrase.actor))
    
    ;;; John wore a coat
    (s7 (sentence -> noun verb-phrase)
@@ -154,10 +153,10 @@
    ;;;  (it) was cooking / (meal) was cooking
    (vvp (verb-verb-phrase -> ?noun ?pronoun verb($firstV) verb($secondV))
         (fail if (noun and pronoun))
-        (if noun    (actor  . noun))
-        (if pronoun (actor  . pronoun))
-        (tense-indicator    . $firstV.sems)
-        (action             . $secondV.sems))
+        (if noun    (actor  . (noun.sems noun.number)))
+        (if pronoun (actor  . (pronoun.sems pronoun.number)))
+        (tense-indicator    . ($firstV.sems $firstV.tense))
+        (action             . ($secondV.sems $secondV.tense)))
 
    ;;;  was running / was cooking 
    (vn  (verb-noun -> verb noun)
