@@ -18,8 +18,8 @@
    (she      pronoun   (sems . female)    (number . singular))
    (they     pronoun   (sems . neutral)   (number . plural))
    
-   (john     noun      (sems  . person)   (number . singular))
-   (jane     noun      (sems  . person)   (number . singular))
+   (john     noun      (sems  . male)     (number . singular))
+   (jane     noun      (sems  . female)   (number . singular))
    
    (become   verb      (sems  . change)   (tense . present-tense))
    (burned   verb      (sems  . damage)   (tense . past-tense)    (state . bad))
@@ -56,6 +56,7 @@
    
    (bad     adjective  (sems . (state-bad)))
    (cold    adjective  (sems . (temperature-low)))
+   (fit     adjective  (sems . (health-good)))
    (healthy adjective  (sems . (health-good)))
    (stupid  adjective  (sems . (intelligence-low)))
    
@@ -91,7 +92,7 @@
    ;;;  [PRONOUN VERB] [(PRONOUN) (NOUN) VERB VERB]
    (s4  (sentence          -> pronoun-phrase verb-verb-phrase)
         (actor     . pronoun-phrase.actor)
-        (action    . ((pronoun-phrase.action) (verb-verb-phrase.action)))
+        (action    . ((pronoun-phrase.action) (verb-verb-phrase.tense-indicator) (verb-verb-phrase.action)))
         (tense-ind . verb-verb-phrase.tense-indicator)
         (object    . verb-verb-phrase.actor))
    
@@ -151,8 +152,10 @@
         (if (conju.sems = 'causation)
             (('effect-> ($firstS.action) ($firstS.object))
              (if $secondS.action
-                 ('cause-> ($secondS.action) ($secondS.state))
-               ('cause-> ($secondS.state)))
+                 (if $secondS.State
+                     ('cause-> ($secondS.action) ($secondS.state))
+                   ('cause-> ($secondS.action)))
+               ('cause-> $secondS.state))
              ('link-> conju.sems))
           (if (conju.sems = 'causing)
               ((if $firstS.action
@@ -177,25 +180,28 @@
           ('error)))
    
    
-   ;;; COND doesn't work. Prints out the whole statement.
-;   (s4 (sentence -> sentence($firstS) conju sentence($secondS))
-;       (glitch gender-agreement if not $firstS.actor = $secondS.actor)
-;       (actor . $firstS.actor)
-;       (lisp (cond ((conju.sems = 'causation)
-;              (('effect-> ($firstS.action) ($firstS.object))
-;               (if $secondS.action
-;                   ('cause-> ($secondS.action) ($secondS.state))
-;                 ('cause-> ($secondS.state)))
-;               ('link-> conju)))
-;             ((conju.sems = 'causing)
-;              (('effect-> ($secondS.action) ($secondS.object))
-;               (if $firstS.action
-;                   ('cause-> ($firstS.action) ($firstS.state))
-;                 ('cause-> ($firstS.state)))
-;               ('link-> conju)))
-;             (t ('error))
-;             ))
-;       )
+;;;   ;;; COND doesn't quite work.
+;;;   (s12 (sentence          -> sentence($firstS) conju sentence($secondS))
+;;;        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
+;;;        (actor . $firstS.actor)
+;;;        (if (conju.sems = 'causation)
+;;;            (('effect-> ($firstS.action) ($firstS.object))
+;;;             ('cause-> (lisp (cond ((and $secondS.action $secondS.State)
+;;;                          (list $secondS.action $secondS.state))
+;;;                         ((not(null $secondS.action))
+;;;                          $secondS.action)
+;;;                         ((not (null $secondS.state))
+;;;                          $secondS.state)
+;;;                         (t
+;;;                          (null)))))
+;;;             ('link-> conju.sems))
+;;;          (if (conju.sems = 'causing)
+;;;              ((if $firstS.action
+;;;                   ('cause-> ($firstS.action) ($firstS.state))
+;;;                 ('cause-> ($firstS.state)))
+;;;               ('effect-> ($secondS.action) ($secondS.object))
+;;;               ('link-> conju.sems))
+;;;            ('error))))
 
    ;;;  Example: become healthy
    ;;;  [VERB] [ADJECTIVE]
@@ -206,7 +212,7 @@
    ;;;  Example: she went
    ;;;  [PRONOUN] [VERB]
    (pp  (pronoun-phrase   -> pronoun verb)
-        (actor  . (pronoun.number pronoun.sems))
+        (actor  . (pronoun.sems pronoun.number))
         (action . (verb.sems verb.tense)))
    
    ;;;  Example: to become healthy
@@ -251,23 +257,7 @@
         (number . verb.number)))
  )
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
  
  ;;; ================== TESTING =========================
  ;(defparameter tests

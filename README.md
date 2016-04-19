@@ -14,6 +14,7 @@ Focus on relationships such as:
   - "The Moon has gravitational pull, CONSEQUENTLY the oceans have tides."
   - "SINCE helium rises a helium balloon floats."
   - "Water is formed WHEN two hydrogen atoms and one oxygen atom combine."
+  - "I go running and it keeps me healthy"
 
 Add attributes to objects/actions:
   - "The STUPID man BURNED the meal because he forgot it was cooking."
