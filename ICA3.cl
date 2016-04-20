@@ -22,8 +22,8 @@
    (jane     noun      (sems  . female)   (number . singular))
    
    (become   verb      (sems  . change)   (tense . present-tense))
-   (burned   verb      (sems  . damage)   (tense . past-tense)    (state . bad))
-   (burnt    verb      (sems  . damage)   (tense . past-tense)    (state . bad))
+   (burned   verb      (sems  . damage)   (tense . past-tense)    )
+   (burnt    verb      (sems  . damage)   (tense . past-tense)    )
    (chased   verb      (sems  . hunts)    (tense . past-tense))
    (cooking  verb      (sems  . prepare)  (tense . past-tense))
    (eating   verb      (sems  . ingest)   (tense . continuous))
@@ -31,7 +31,7 @@
    (wanted   verb      (sems  . want)     (tense . past-tense))
    (stop     verb      (sems  . end)      (tense . present-tense))
    (was      verb      (sems  . exist)    (tense . passive))
-   (went     verb      (sems  . travel)   (tense . past-tense))
+   (went     verb      (sems  . travel)   (tense . past-tense)    (tags PTRANS))
    (wore     verb      (sems  . equip)    (tense . past-tense))
    
    (to       prepo     (sems . to))
@@ -48,7 +48,7 @@
    (coat     noun      (sems . clothes)   (number . singular))
    (dog      noun      (sems . canine)    (number . singular))
    (food     noun      (sems . food)      (number . general))
-   (gym      noun      (sems . place)     (number . singular))
+   (gym      noun      (sems . place)     (number . singular)     (tags PTRANS LOC))
    (man      noun      (sems . person)    (number . singular))
    (meal     noun      (sems . food)      (number . singular))
    (men      noun      (sems . person)    (number . plural))
@@ -75,6 +75,8 @@
    ;;;  Example: she went (to) the gym
    ;;;  [PRONOUN VERB] [(PREPOSITION) DETERMINER NOUN]
    (s2  (sentence         -> pronoun-phrase noun-phrase)
+        (glitch no-agreement
+                if not pronoun-phrase.tags $* noun-phrase.tags)
         (actor    . pronoun-phrase.actor)
         (action   . pronoun-phrase.action)
         (object   . noun-phrase.sems))
@@ -213,7 +215,8 @@
    ;;;  [PRONOUN] [VERB]
    (pp  (pronoun-phrase   -> pronoun verb)
         (actor  . (pronoun.sems pronoun.number))
-        (action . (verb.sems verb.tense)))
+        (action . (verb.sems verb.tense))
+        (tags   . (verb.tags)))
    
    ;;;  Example: to become healthy
    ;;;  [PREPOSITION] [VERB ADJECTIVE]
@@ -247,7 +250,8 @@
         (number . (noun.number))
         (if adjective
             (sems . (determiner.sems *.adjective.sems noun.number noun.sems))
-          (sems   . (determiner.sems noun.number noun.sems))))
+          (sems   . (determiner.sems noun.number noun.sems)))
+        (tags     . (noun.tags)))
    
    ;;;  Example: chased the cat
    ;;;  [VERB] [(PREPOSITION) DETERMINER NOUN]
