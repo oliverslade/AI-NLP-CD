@@ -22,8 +22,8 @@
    (jane     noun      (sems  . female)   (number . singular))
    
    (become   verb      (sems  . change)   (tense . present-tense))
-   (burned   verb      (sems  . damage)   (tense . past-tense)    )
-   (burnt    verb      (sems  . damage)   (tense . past-tense)    )
+   (burned   verb      (sems  . damage)   (tense . past-tense))
+   (burnt    verb      (sems  . damage)   (tense . past-tense))
    (chased   verb      (sems  . hunts)    (tense . past-tense))
    (cooking  verb      (sems  . prepare)  (tense . past-tense))
    (eating   verb      (sems  . ingest)   (tense . continuous))
@@ -131,7 +131,7 @@
         (if (conju.sems = 'causation)
             (('effect-> (sentence.action) (sentence.object)) 
              ('cause-> (pronoun-phrase.actor) (pronoun-phrase.action) (sentence.object))
-             ('link-> conju))
+             ('link-> conju.sems))
           ('error)))
    
    ;;;  Example: ?
@@ -148,24 +148,24 @@
    ;;;  Example: she went to the gym because she wanted to become healthy
    ;;;  Example: john wore a coat because it was cold
    ;;;  [SENTENCE] [CONJUGATION] [SENTENCE]
-   (s10 (sentence          -> sentence($firstS) conju sentence($secondS))
-        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
-        (actor . $firstS.actor)
-        (if (conju.sems = 'causation)
-            (('effect-> ($firstS.action) ($firstS.object))
-             (if $secondS.action
-                 (if $secondS.State
-                     ('cause-> ($secondS.action) ($secondS.state))
-                   ('cause-> ($secondS.action)))
-               ('cause-> $secondS.state))
-             ('link-> conju.sems))
-          (if (conju.sems = 'causing)
-              ((if $firstS.action
-                   ('cause-> ($firstS.action) ($firstS.state))
-                 ('cause-> ($firstS.state)))
-               ('effect-> ($secondS.action) ($secondS.object))
-               ('link-> conju.sems))
-            ('error))))
+;;;   (s10 (sentence          -> sentence($firstS) conju sentence($secondS))
+;;;        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
+;;;        (actor . $firstS.actor)
+;;;        (if (conju.sems = 'causation)
+;;;            (('effect-> ($firstS.action) ($firstS.object))
+;;;             (if $secondS.action
+;;;                 (if $secondS.State
+;;;                     ('cause-> ($secondS.action) ($secondS.state))
+;;;                   ('cause-> ($secondS.action)))
+;;;               ('cause-> $secondS.state))
+;;;             ('link-> conju.sems))
+;;;          (if (conju.sems = 'causing)
+;;;              ((if $firstS.action
+;;;                   ('cause-> ($firstS.action) ($firstS.state))
+;;;                 ('cause-> ($firstS.state)))
+;;;               ('effect-> ($secondS.action) ($secondS.object))
+;;;               ('link-> conju.sems))
+;;;            ('error))))
    
    ;;;  Example: because she wanted to become healthy she went to the gym
    ;;;  Example: since she wanted to become healthy she went to the gym
@@ -182,28 +182,32 @@
           ('error)))
    
    
-;;;   ;;; COND doesn't quite work.
-;;;   (s12 (sentence          -> sentence($firstS) conju sentence($secondS))
-;;;        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
-;;;        (actor . $firstS.actor)
-;;;        (if (conju.sems = 'causation)
-;;;            (('effect-> ($firstS.action) ($firstS.object))
-;;;             ('cause-> (lisp (cond ((and $secondS.action $secondS.State)
-;;;                          (list $secondS.action $secondS.state))
-;;;                         ((not(null $secondS.action))
-;;;                          $secondS.action)
-;;;                         ((not (null $secondS.state))
-;;;                          $secondS.state)
-;;;                         (t
-;;;                          (null)))))
-;;;             ('link-> conju.sems))
-;;;          (if (conju.sems = 'causing)
-;;;              ((if $firstS.action
-;;;                   ('cause-> ($firstS.action) ($firstS.state))
-;;;                 ('cause-> ($firstS.state)))
-;;;               ('effect-> ($secondS.action) ($secondS.object))
-;;;               ('link-> conju.sems))
-;;;            ('error))))
+   ;;; COND doesn't quite work.
+   (s12 (sentence          -> sentence($firstS) conju sentence($secondS))
+        (glitch gender-agreement if not $firstS.actor = $secondS.actor)
+        (actor . $firstS.actor)
+        (if (conju.sems = 'causation)
+            (('effect-> ($firstS.action) ($firstS.object))
+             ('cause-> (lisp (cond ((and $secondS.action $secondS.State)
+                          (list $secondS.action $secondS.state))
+                         ((not(null $secondS.action))
+                          $secondS.action)
+                         ((not (null $secondS.state))
+                          $secondS.state)
+                         (t
+                          (null)))))
+             ('link-> conju.sems))
+          (if (conju.sems = 'causing)
+              (('effect-> ($secondS.action) ($secondS.object))
+              ('cause-> (lisp (cond ((and $firstS.action $firstS.State)
+                          (list $firstS.action $firstS.state))
+                         ((not(null $firstS.action))
+                          $firstS.action)
+                         ((not (null $firstS.state))
+                          $firstS.state)
+                         (t
+                          (null))))))
+            ('error))))
 
    ;;;  Example: become healthy
    ;;;  [VERB] [ADJECTIVE]
