@@ -94,24 +94,6 @@ Semantics
 T
 )
 
-(test4 - (parse 'sentence '(john wore a coat because it was cold)) =>
-
-_____________ 
-COMPLETE-EDGE 0 8 S10 SENTENCE (JOHN WORE A COAT BECAUSE IT WAS COLD) NIL
-     Glitches: (GENDER-AGREEMENT)
-S10  SENTENCE -> (SENTENCE ($FIRSTS) CONJU SENTENCE ($SECONDS))
-Syntax
-(SENTENCE
- (SENTENCE (NOUN JOHN)
-  (VERB-PHRASE (VERB WORE) (NOUN-PHRASE (DETERMINER A) (NOUN COAT))))
- (CONJU BECAUSE) (SENTENCE (PRONOUN IT) (ADJECTIVE-PHRASE (VERB WAS) (ADJECTIVE COLD))))
-Semantics
-(SENTENCE (ACTOR MALE SINGULAR)
- ((EFFECT-> (EQUIP) (GENERAL SINGULAR CLOTHES))
-  (CAUSE-> ((EXIST) (PASSIVE)) (TEMPERATURE-LOW)) (LINK-> CAUSATION)))
-T
-)
-
 (test5 - (parse 'sentence '(stop eating bad food in-order to become healthy)) =>
 
 _____________ 
